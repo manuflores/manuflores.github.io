@@ -1,9 +1,26 @@
 ---
-layout: post
+layout: distill
 title: Bounding eigenvalues of a matrix using the Gershgorin disk theorem
----
+description: 
+date: 2021-11-11
+featured: true
 
-![_config.yml]({{_site.baseurl_}}/images/gersh.png)
+authors: 
+    - name : Emanuel Flores
+      affiliations:
+        name: Caltech
+
+# toc:
+#   - name: Origins
+#     # if a section has subsections, you can add them as follows:
+#     # subsections:
+#     #   - name: Example Child Subsection 1
+#     #   - name: Example Child Subsection 2
+#   - name: Law of large numbers and frequentism
+#   - name: Statistical mechanics
+#   - name: Hilbert's sixth problem
+#   - name: Axiomatization in the "elementary" (finite) case
+#   - name: Infinite families of events
 
 ### The beauty of the Gershgorin disk theorem
 
