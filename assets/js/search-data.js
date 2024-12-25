@@ -101,9 +101,9 @@ ninja.data = [{
           window.open("https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2", "_blank");
         
       },
-    },{id: "post-bounding-eigenvalues-of-a-matrix-using-the-gershgorin-disk-theorem",
+    },{id: "post-gershgorin-theorem",
       
-        title: "Bounding eigenvalues of a matrix using the Gershgorin disk theorem",
+        title: "Gershgorin Theorem",
       
       description: "",
       section: "Posts",
