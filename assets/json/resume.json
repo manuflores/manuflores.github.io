@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "Emanuel Flores Bautista",
-    "label": "Biochemistry & Molecular Biophysics PhD Candidate",
+    "label": "PhD Candidate",
     "image": "",
     "email": "",
     "phone": "",
     "url": "",
-    "summary": "PhD candidate in Biochemistry & Molecular Biophysics with a graduate minor in Applied & Computational Mathematics, focusing on topological decomposition of cell state manifolds",
+    "summary": "PhD candidate in Biochemistry & Molecular Biophysics with a graduate minor in Applied & Computational Mathematics",
     "location": {
       "address": "",
       "postalCode": "",
@@ -24,7 +24,8 @@
       "startDate": "2022-06-01",
       "endDate": "2022-09-17",
       "summary": "Used a geometric model to understand technical effects in single cell transcriptome data. Using this model, we built an analysis pipeline that enabled integrating datasets from different timepoints that were possibly subject to the studied technical effects.",
-      "highlights": []
+      "highlights": [],
+      "location": "San Francisco, California, US"
     },
     {
       "name": "California Institute of Technology",
@@ -33,7 +34,8 @@
       "startDate": "2018-06-10",
       "endDate": "2018-10-20",
       "summary": "Together with my collaborator, Andy Halleran, we developed a stochastic differential equations model to simulate plasmid partitioning in bacterial cells.",
-      "highlights": []
+      "highlights": [],
+      "location": "Pasadena, California, US"
     }
   ],
   "education": [
