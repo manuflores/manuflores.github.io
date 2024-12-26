@@ -1,8 +1,10 @@
 ---
 layout: distill
 title: Bounding eigenvalues of a matrix using the Gershgorin disk theorem
-description: 
+description: A method to approximate the spectrum of a matrix. 
+tags: math
 date: 2021-11-11
+giscuss_comments: true 
 featured: true
 
 authors: 
@@ -10,17 +12,12 @@ authors:
       affiliations:
         name: Caltech
 
-# toc:
-#   - name: Origins
-#     # if a section has subsections, you can add them as follows:
-#     # subsections:
-#     #   - name: Example Child Subsection 1
-#     #   - name: Example Child Subsection 2
-#   - name: Law of large numbers and frequentism
-#   - name: Statistical mechanics
-#   - name: Hilbert's sixth problem
-#   - name: Axiomatization in the "elementary" (finite) case
-#   - name: Infinite families of events
+toc:
+  -name: Preliminaries
+  -name: The statement
+  -name: Examples
+
+---
 
 ### The beauty of the Gershgorin disk theorem
 
