@@ -105,7 +105,7 @@ It's a good moment to step back and think about what we have just arrived and wh
 First, the Gershgorin disk theorem tells us that the spectrum of a Markov matrix lives in the unit disk. 
 For visualization, let's look at the vectors in the unit circle and color them by their angle. 
 
-![_config.yml]({{_site.baseurl_}}/images/vectors_in_unit_circle.png)
+{% include figure.liquid loading="eager" path="assets/img/vectors_in_unit_circle.png" class="img-fluid rounded z-depth-1" %}
 
 But where does the spectrum of the Laplacian live in the complex plane? 
 
@@ -114,11 +114,11 @@ formula puzzled me for a while, since written in set notation $$\mathrm{spec} \,
 
 First, the negative of a complex number is just the negative of the real and the imaginary part. Thus we can think of multuplying a complex number by -1 as the action of the linear transformation $$\mathrm{diag}(-1,-1)$$. We can visualize the operation of the negative of vectors in the complex unit circle as follows:
 
-![_config.yml]({{_site.baseurl_}}/images/flipped_vectors_in_unit_circle.png)
+{% include figure.liquid loading="eager" path="assets/img/flipped_vectors_in_unit_circle.png" class="img-fluid rounded z-depth-1" %}
 
 Finally, to get the set $$1 - \mathbb{D^2}$$ we just need to *shift* the disk one unit to the right in the real component of the complex plane (horizontal direction). We can visualize the Gershgorin domains as follows (follow the colors to see where each original vector lands after the transformation!):
 
-![_config.yml]({{_site.baseurl_}}/images/spectrum_laplace_markov.png)
+{% include figure.liquid loading="eager" path="assets/img/spectrum_laplace_markov.png" class="img-fluid rounded z-depth-1" %}
 
 Importantly, let's imagine following the eigenvalue 1 of Markov. Our formula tells us that the corresponding eigenvalue of the Laplace matrix would be zero! Geometrically, we first would have to multiply it by -1 which would flip it to the vector $$(-1,0)^T$$ in the complex plane and then shifting it to the right by a unit which would take it to the origin in the complex plane, i.e. the complex number 0.
 
