@@ -30,7 +30,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-bounding-eigenvalues-of-a-matrix-using-the-gershgorin-disk-theorem",
+        },{id: "post-a-connection-between-the-markov-and-laplace-matrix-from-the-lens-of-the-gershgorin-disk-theorem",
+      
+        title: "A connection between the Markov and Laplace matrix from the lens of the...",
+      
+      description: "",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2022/laplace-markov/";
+        
+      },
+    },{id: "post-bounding-eigenvalues-of-a-matrix-using-the-gershgorin-disk-theorem",
       
         title: "Bounding eigenvalues of a matrix using the Gershgorin disk theorem",
       
