@@ -15,7 +15,8 @@
       institution: California Institute of Technology (Caltech)
       year: 2025
       description:
-        - title: Dissertation 
+        - Description 1. 
+        # - title: Dissertation 
         #   contents: 
         #   - "Topological decomposition of cell state manifolds"
         # - title: Supervisor 
@@ -25,6 +26,7 @@
       institution: Universidad Autónoma de Yucatán (UADY)
       year: 2013
       description:
+         - Description 1. 
         # - title: Dissertation 
         #   contents: 
         #   - "Functional prediction of unknown transcription factors in *E. coli* K-12 using RNA-seq data"
