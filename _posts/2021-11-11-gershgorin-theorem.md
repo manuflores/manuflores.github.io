@@ -13,13 +13,14 @@ authors:
         name: Caltech
 
 toc:
-  -name: Preliminaries
-  -name: The statement
-  -name: Examples
+  - name: The beauty of the Gershgorin disk theorem
+  - name: Preliminaries
+  - name: The statement
+  - name: Examples
 
 ---
 
-### The beauty of the Gershgorin disk theorem
+## The beauty of the Gershgorin disk theorem
 
 In this post I'll talk about one of the most beatiful theorems I've encountered while
 studying linear algebra. I bumped into it while taking the ACM104 Applied Linear Algebra
@@ -32,7 +33,7 @@ I find this theorem aesthetically pleasing because it has a visual representatio
 
 We follow the proof of the book *Applied Linear Algebra* by Olver and Shakiban.
 
-### Preliminaries
+## Preliminaries
 
 Before stating the theorem, we'll need some definitions. Recall that the magnitude of a complex number $$z = a + ib$$  is defined by
 
@@ -66,10 +67,14 @@ $$
 \mathfrak{D}_A = \{ \cup_{i = 1}^n D_i \} \subseteq \mathbb{C}
 $$
 
+We visualize the Gershgorin domain of a matrix in the image below: 
+
+{% include figure.liquid loading="eager" path="assets/img/gersh.png" class="img-fluid rounded z-depth-1" %}
+
 
 **Definition.** *Spectrum of a matrix*. We call the spectrum of a matrix A to the set of eigenvalues associated with A. We denote it as $$\mathrm{spec} A$$.
 
-### The statement
+## The statement
 
 **Theorem.** The spectrum of a matrix A lies within the Gershgorin domain.
 
@@ -140,6 +145,6 @@ if its Gershgorin domain doesn't contain zero, it cannot be an eigenvalue, hence
 **Corollary.** A symmetric matrix is positive definite if its Gershgorin domain lies in the positive side of the $$\mathbb{C}$$ plane. In other words, a matrix is p.d. if
 $$a_{ii} > \sum_{j\neq i} a_i \forall i = 1, ..., n.$$.
 
-### Examples
+## Examples
 
 [Here are some visualizations in a jupyter colab notebook](https://colab.research.google.com/github/manuflores/sandbox/blob/master/notebooks/gershgorin.ipynb) if you want to get a feel of the theorem.
