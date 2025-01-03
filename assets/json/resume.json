@@ -19,13 +19,13 @@
   "work": [
     {
       "name": "Chan Zuckerberg Biohub",
-      "position": "Intern",
+      "position": "Research Internship",
       "url": "",
       "startDate": "2022-06-01",
       "endDate": "2022-09-17",
       "summary": "Used a geometric model to understand technical effects in single cell transcriptome data. Using this model, we built an analysis pipeline that enabled integrating datasets from different timepoints that were possibly subject to the studied technical effects.",
       "highlights": [],
-      "location": "San Francisco, California, US"
+      "location": "San Francisco, California"
     },
     {
       "name": "California Institute of Technology",
@@ -48,7 +48,7 @@
       "startDate": "2020-01-01",
       "endDate": "2025-12-31",
       "score": "",
-      "courses": [""],
+      "courses": [],
       "description": "Dissertation: Topological decomposition of cell state manifolds\nSupervisor: Matt Thomson"
     },
     {
