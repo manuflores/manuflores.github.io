@@ -18,17 +18,13 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-Hi, I'm Manu, a grad student in Matt Thomson's group at Caltech. 
-I'm a proud mexican, born and raised in Cancun, but my spiritual home is in Merida, Yucatan. 
-It was in Merida that I was lucky to been exposed to topological ideas, which ended up being the main tools of my PhD thesis. 
-It turns out that this lineage of mexican topologists is goes back a few generations, and interestingly related to multiple visits of Solomon Lefschetz to Mexico. 
+Hey, hola, hallo! I'm Manu, a grad student in Matt Thomson's group at Caltech, a greenhouse for exploring bold ideas in math & biology. 
 
 ### Research interests
 
 I'm broadly interested in using mathematics and computation to answer questions in genomics, evolution, and development. 
-In this vein, I spend most of my time implementing in computational biology world.
 
-These days I'm mostly interested in: 
+These days I'm mostly interested in the following topics.  
 
 * Development and regeneration: 
   * How does a single cell self-organize to develop into a complex organism like an animal ? 
@@ -36,11 +32,10 @@ These days I'm mostly interested in:
 
 I guide the answer to these questions using the following mathematical methods. 
 
-* Applied mathematics: 
-  * Applied and Numerical Linear algebra 
-  * Differential Geometry 
-  * Matrix groups 
-  * Topology
+* Applied and Numerical Linear algebra 
+* Differential Geometry 
+* Matrix groups 
+* Topology
 
 
 <!-- Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
