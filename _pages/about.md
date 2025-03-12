@@ -39,7 +39,15 @@ I guide the answer to these questions using the following mathematical methods.
 
 ### Academic history 
 
-Before coming to Caltech I was fortunate nough to work with Dr. Ernesto Perez Rueda at the Institute of Applied Math (IIMAS) of UNAM. 
+Before coming to Caltech I was fortunate enough to work with Ernesto Pérez Rueda at the Institute of Applied Math (IIMAS) of UNAM. Our work centered in the idea of using machine learning on expression data for predicting the function of experimentally uncharacterized regulatory proteins. It was under Ernesto's guidance that I learned how to approach questions in biology from a computational mathematics perspective. 
+My work and conversations with Ernesto propelled me to become a researcher. 
+
+Some years later, the work with Ernesto led me to the following exciting projects at Caltech:
+
+* With Andy Halleran in the lab of Richard Murray working on the stability of genetic circuits, and 
+* With Suzy Beleer and Bill Ireland on the high-throughput characterization of promoters (RegSeq) in the lab of Rob Phillips. 
+
+Both of these experimental experiences where fundamental for my formation as a researcher and I'm greatly endoubted to Andy, Suzy, and Bill for their mentorship, as well as to Richard and Rob for their guidance and vision.
 
 
 <!-- Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
