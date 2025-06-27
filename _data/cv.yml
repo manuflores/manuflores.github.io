@@ -16,23 +16,23 @@
       year: 2025
       description:
         - Description 1. 
-        # - title: Dissertation 
-        #   contents: 
-        #   - "Topological decomposition of cell state manifolds"
-        # - title: Supervisor 
-        #   contents: 
-        #     - Matt Thomson
+        - title: Dissertation 
+          contents: 
+          - "Topological decomposition of cell state manifolds"
+        - title: Supervisor 
+          contents: 
+            - Matt Thomson
     - title: Licenciatura 
       institution: Universidad Autónoma de Yucatán (UADY)
       year: 2013
       description:
          - Description 1. 
-        # - title: Dissertation 
-        #   contents: 
-        #   - "Functional prediction of unknown transcription factors in *E. coli* K-12 using RNA-seq data"
-        # - title: Supervisor 
-        #   contents: 
-        #     - Ernesto Pérez Rueda
+        - title: Dissertation 
+          contents: 
+          - "Functional prediction of unknown transcription factors in *E. coli* K-12 using RNA-seq data"
+        - title: Supervisor 
+          contents: 
+            - Ernesto Pérez Rueda
 
 - title: Experience
   type: time_table
