@@ -2,7 +2,7 @@ import type { Profile, Experience, Education, Track } from '@/types'
 
 export const profile: Profile = {
   name: '',
-  tagline: "Hi, I'm Manu. I'm building self-improving agents for applications in healthcare at [Cainex](https://cainex.com).",
+  tagline: "Hi, I'm Manu.  I'm building self-improving agents for applications in healthcare at [Cainex](https://cainex.com).",
   socials: [
     {
       platform: 'github',
