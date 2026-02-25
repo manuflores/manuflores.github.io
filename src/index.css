@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-surface-light text-primary-light;
+  }
+  html.dark {
+    @apply bg-surface-dark text-primary-dark;
+  }
+}
+
+.timeline-dot {
+  @apply absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full
+    bg-stone-400 dark:bg-neutral-500
+    border-2 border-surface-light dark:border-surface-dark;
+}
+
+.animated-link {
+  @apply relative inline-block;
+}
+
+.animated-link::after {
+  content: '';
+  @apply absolute bottom-0 left-0 h-px w-0 transition-all duration-300;
+  background-color: theme('colors.accent.light');
+}
+
+html.dark .animated-link::after {
+  background-color: theme('colors.accent.dark');
+}
+
+.animated-link:hover::after {
+  @apply w-full;
+}
+
+/* Animations */
+.fade-in {
+  @apply opacity-0 translate-y-4 transition-all duration-700 ease-out;
+}
+.fade-in.visible {
+  @apply opacity-100 translate-y-0;
+}
+
+.fade-in-fast {
+  @apply opacity-0 translate-y-3 transition-all duration-500 ease-out;
+}
+.fade-in-fast.visible {
+  @apply opacity-100 translate-y-0;
+}
+
+.page-enter {
+  animation: pageIn 0.4s ease-out both;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Markdown prose styles */
+.prose-custom h1 { @apply text-3xl font-bold mt-8 mb-4 text-primary-light dark:text-primary-dark; }
+.prose-custom h2 { @apply text-2xl font-bold mt-6 mb-3 text-primary-light dark:text-primary-dark; }
+.prose-custom h3 { @apply text-xl font-semibold mt-4 mb-2 text-primary-light dark:text-primary-dark; }
+.prose-custom p { @apply mb-4; }
+.prose-custom ul { @apply list-disc pl-6 mb-4 space-y-1; }
+.prose-custom ol { @apply list-decimal pl-6 mb-4 space-y-1; }
+.prose-custom blockquote { @apply border-l-2 border-border-light dark:border-border-dark pl-4 italic my-4; }
+.prose-custom a { @apply text-accent-light dark:text-accent-dark underline underline-offset-2; }
+.prose-custom img { @apply rounded-lg my-6 max-w-full; }
+.prose-custom strong { @apply font-semibold text-primary-light dark:text-primary-dark; }
+
+.prose-custom code:not(pre code) {
+  @apply text-sm px-1.5 py-0.5 rounded
+    bg-stone-100 dark:bg-neutral-800
+    text-primary-light dark:text-primary-dark;
+}
+
+.prose-custom pre {
+  @apply rounded-lg p-4 my-4 overflow-x-auto text-sm
+    bg-stone-50 dark:bg-neutral-900
+    border border-border-light dark:border-border-dark;
+}
+
+.prose-custom .katex-display {
+  @apply my-6 overflow-x-auto;
+}

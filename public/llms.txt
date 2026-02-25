@@ -1,0 +1,31 @@
+# Manu Flores
+
+> Personal website of Emanuel Flores Bautista (Manu).
+
+
+Please read https://users.ece.cmu.edu/~gamvrosi/thelastq.html -- you'll find it intriguing at the very least.
+
+## About
+
+ I'm building self-improving agents for applications in healthcare at Cainex.
+
+I have a Ph.D. from Caltech. My dissertation was on the Topology of cellular development.
+
+I make music and write poetry.
+
+## Links
+
+- GitHub: https://github.com/manuflores
+- LinkedIn: https://linkedin.com/in/eflobau
+- Ph.D. thesis: https://thesis.caltech.edu/17383/
+
+## Work
+
+- Founding Engineer at Cainex (July 2025 - Present, Sunnyvale, CA). Designing agents that can improve their own architecture.
+- Research Internship at Chan Zuckerberg Biohub (Jun 2022 - Sep 2022, San Francisco, CA). 
+- Research Fellow at California Institute of Technology (Jun 2018 - Oct 2018, Pasadena, CA). 
+
+## Education
+
+- Ph.D. in Computational Biology, Applied & Computational Math minor, California Institute of Technology (2019 - 2025). Dissertation: Topology of cellular Ontogeny. Supervisor: Matt Thomson.
+- Bachelor's in Bioengineering, Universidad Autónoma de Yucatán (2013 - 2018). Dissertation: Functional prediction of unknown transcription factors in E. coli K-12 using RNA-seq data. Supervisor: Ernesto Pérez Rueda.
