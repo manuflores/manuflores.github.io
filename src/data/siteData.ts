@@ -23,7 +23,7 @@ export const experience: Experience[] = [
     role: 'Founding Engineer',
     period: 'July 2025 - Present',
     location: 'Sunnyvale, California',
-    summary: 'Designing agents that can infer that can improve their own architecture.'
+    summary: 'Designing agents architectures that can self-improve.'
   },
   {
     organization: 'Chan Zuckerberg Biohub',
