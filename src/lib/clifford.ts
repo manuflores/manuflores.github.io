@@ -38,8 +38,8 @@ export function driftParams(
 
 /** Main figure: change these values to get different shapes (wings, spirals, tendrils). */
 export const CLIFFORD_BASE_PARAMS: CliffordParams = {
-  a: -1.7,
+  a: 1.5,
   b: 1.8,
-  c: -1.9,
+  c: 1.9,
   d: -0.4,
 }

@@ -14,6 +14,11 @@ export const profile: Profile = {
       url: 'https://linkedin.com/in/eflobau',
       label: 'LinkedIn',
     },
+    {
+      platform: 'google scholar',
+      url: 'https://scholar.google.com/citations?user=Lpc-oCUAAAAJ&hl=en',
+      label: 'google-scholar',
+    },
   ],
 }
 
@@ -47,11 +52,11 @@ export const education: Education[] = [
   {
     institution: 'California Institute of Technology (Caltech)',
     degree: 'Ph.D.',
-    area: 'Computational Biology, Applied & Computational Math minor',
+    area: 'Biochemistry and Molecular Biophysics with an Applied & Computational Math Graduate Minor',
     period: '2019 - 2025',
     location: 'Pasadena, California',
     description:
-      'Dissertation: Topology of cellular Ontogeny. Supervisor: Matt Thomson.',
+      'Dissertation: Topology of Cellular Ontogeny. Supervisor: Matt Thomson.',
   },
   {
     institution: 'Universidad Autónoma de Yucatán (UADY)',

@@ -17,19 +17,19 @@ export default {
           'card-dark': '#1a1a1a',
         },
         primary: {
-          light: colors.stone[900],
+          light: '#2A2F3D',
           dark: colors.neutral[100],
         },
         secondary: {
-          light: colors.stone[500],
+          light: '#6B7485',
           dark: colors.neutral[400],
         },
         accent: {
-          light: colors.emerald[600],
+          light: '#4169E1',
           dark: colors.emerald[400],
         },
         border: {
-          light: colors.stone[200],
+          light: '#C8CDD8',
           dark: colors.neutral[700],
         },
       },

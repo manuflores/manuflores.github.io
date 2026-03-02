@@ -49,7 +49,7 @@ ecos del horizonte,
 
 gradiente de azules, 
 
-el ritmo del harpa y las maracas, 
+el ritmo del harpa y la marimba, 
 
 quiero aprender a navegar como el albatros, 
 

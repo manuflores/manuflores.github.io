@@ -3,11 +3,11 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { useTheme } from '@/hooks/useTheme'
 
 const links = [
-  { to: '/', label: 'Home' },
-  { to: '/about', label: 'About' },
-  { to: '/experience', label: 'Work' },
-  { to: '/music', label: 'Sound' },
-  { to: '/verses', label: 'Versos' },
+  { to: '/', label: '~/home' },
+  { to: '/about', label: '~/about' },
+  { to: '/experience', label: '~/work' },
+  { to: '/music', label: '~/sound' },
+  { to: '/verses', label: '~/verses' },
 ]
 
 export default function Header() {
@@ -40,7 +40,7 @@ export default function Header() {
             to="/"
             className="text-xl font-bold text-primary-light dark:text-primary-dark hover:text-accent-light dark:hover:text-accent-dark transition-colors"
           >
-            Manu Flores
+            manu flores
           </NavLink>
 
           {/* Desktop nav */}

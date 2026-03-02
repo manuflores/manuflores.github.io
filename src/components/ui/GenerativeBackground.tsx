@@ -57,25 +57,22 @@ function colorDark(hueBias: number, t: number): [number, number, number] {
   return [31, 41, 55]
 }
 
-/** Mauve/grey palette (light) */
+/** Royal Blue / Ink palette (light) */
 function colorLight(hueBias: number, t: number): [number, number, number] {
   const v = (Math.sin(t * 2) * 0.5 + 0.5) * 0.7 + hueBias * 0.3
-  if (v > 0.7) return [71, 185, 129]
-  if (v > 0.45) return [110, 44, 183]
-  if (v > 0.25) return [75, 85, 99]
-  return [31, 41, 55]
+  if (v > 0.75) return [65, 105, 225]
+  if (v > 0.6) return [100, 130, 200]
+  if (v > 0.45) return [140, 155, 185]
+  if (v > 0.25) return [185, 192, 210]
+  return [35, 42, 65]
 }
-//   if (v > 0.7) return [167, 139, 250]
-//   if (v > 0.45) return [156, 163, 175]
-//   if (v > 0.25) return [209, 213, 219]
-//   return [229, 231, 235]
-// }
 
 interface Props {
   variant?: 'full' | 'borders'
+  opacity?: string
 }
 
-export default function GenerativeBackground({ variant = 'full' }: Props) {
+export default function GenerativeBackground({ variant = 'full', opacity }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mouseRef = useRef({ x: -10000, y: -10000, active: false })
   const lensStrengthRef = useRef(0)
@@ -272,7 +269,7 @@ export default function GenerativeBackground({ variant = 'full' }: Props) {
     <div
       ref={containerRef}
       aria-hidden
-      className="pointer-events-none fixed inset-0 overflow-hidden opacity-32 dark:opacity-50 transition-opacity duration-700"
+      className={`pointer-events-none fixed inset-0 overflow-hidden ${opacity ?? 'opacity-32'} dark:opacity-50 transition-opacity duration-700`}
       style={maskStyle}
     />
   )
