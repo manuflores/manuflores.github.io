@@ -60,7 +60,7 @@ export const education: Education[] = [
   },
   {
     institution: 'Universidad Autónoma de Yucatán (UADY)',
-    degree: "Bachelor's",
+    degree: "B.Sc.",
     area: 'Bioengineering',
     period: '2013 – 2018',
     location: 'Yucatán, Mexico',

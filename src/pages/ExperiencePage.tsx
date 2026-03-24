@@ -9,7 +9,7 @@ export default function ExperiencePage() {
     <section className="py-12">
       <div ref={heading.ref} className={`fade-in ${heading.visible ? 'visible' : ''}`}>
         <h1 className="text-4xl md:text-5xl font-bold mb-8 text-primary-light dark:text-primary-dark">
-          Work
+          Experience
         </h1>
       </div>
       <div ref={content.ref} className={`fade-in ${content.visible ? 'visible' : ''}`}>
