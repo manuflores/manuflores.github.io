@@ -25,7 +25,7 @@ un mar de soles esculpe mis atormentados salitres.
 
 ### (Sin título)
 
-En Holbox el cielo esta en el agua;
+El cielo esta en el agua;
 
 levanto mis manos, 
 
@@ -49,7 +49,7 @@ y yace.
 
 Vivir es la danza
 
- de fluir y decidir.
+ entre fluir y decidir.
 
  ### (Sin título)
 
