@@ -11,25 +11,25 @@ export default {
       },
       colors: {
         surface: {
-          light: '#FAF9F7',
+          light: '#ece9df',
           dark: '#121212',
-          'card-light': '#FFFFFF',
+          'card-light': '#f5f2e8',
           'card-dark': '#1a1a1a',
         },
         primary: {
-          light: '#2A2F3D',
+          light: '#353b46',
           dark: colors.neutral[100],
         },
         secondary: {
-          light: '#6B7485',
+          light: '#798798',
           dark: colors.neutral[400],
         },
         accent: {
-          light: '#4169E1',
+          light: '#6b9fbb',
           dark: colors.emerald[400],
         },
         border: {
-          light: '#C8CDD8',
+          light: '#d3e4ed',
           dark: colors.neutral[700],
         },
       },

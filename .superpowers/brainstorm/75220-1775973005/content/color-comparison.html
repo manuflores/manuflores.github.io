@@ -1,0 +1,252 @@
+<h2>Color Palette: Current vs light-creamy</h2>
+<p class="subtitle">Proposed mapping from your iTerm <strong>light-creamy</strong> profile to the website's color tokens</p>
+
+<style>
+  .palette-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .palette-col h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    opacity: 0.6;
+  }
+  .swatch-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .swatch {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+  .swatch-info {
+    flex: 1;
+  }
+  .swatch-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .swatch-hex {
+    font-size: 11px;
+    font-family: monospace;
+    opacity: 0.6;
+  }
+  .arrow {
+    font-size: 18px;
+    opacity: 0.4;
+    align-self: center;
+    text-align: center;
+  }
+  .preview-section {
+    margin-top: 32px;
+  }
+  .preview-section h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    opacity: 0.6;
+  }
+  .preview-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .preview-card {
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid;
+  }
+  .preview-card.current {
+    background: #FAF9F7;
+    border-color: #C8CDD8;
+  }
+  .preview-card.iterm {
+    background: #ece9df;
+    border-color: #d3e4ed;
+  }
+  .preview-card .card-inner {
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 10px;
+    border: 1px solid;
+  }
+  .preview-card.current .card-inner { border-color: #C8CDD8; }
+  .preview-card.iterm .card-inner { border-color: #d3e4ed; background: #f5f2e8; }
+  .preview-card .heading {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .preview-card.current .heading { color: #2A2F3D; }
+  .preview-card.iterm .heading { color: #353b46; }
+  .preview-card .body-text {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .preview-card.current .body-text { color: #6B7485; }
+  .preview-card.iterm .body-text { color: #798798; }
+  .preview-card .link {
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: underline;
+    cursor: default;
+  }
+  .preview-card.current .link { color: #4169E1; }
+  .preview-card.iterm .link { color: #4a7fa5; }
+  .preview-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.5;
+    margin-bottom: 6px;
+  }
+  .diff-indicator {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #d3e4ed;
+    color: #4a7fa5;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+
+<div class="palette-grid">
+  <div class="palette-col">
+    <h3>Current</h3>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FAF9F7"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">surface-light</div>
+        <div class="swatch-hex">#FAF9F7</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FFFFFF; border-color:#ddd"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">surface-card-light</div>
+        <div class="swatch-hex">#FFFFFF</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#2A2F3D"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">primary-light</div>
+        <div class="swatch-hex">#2A2F3D</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#6B7485"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">secondary-light</div>
+        <div class="swatch-hex">#6B7485</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#4169E1"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">accent-light</div>
+        <div class="swatch-hex">#4169E1</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#C8CDD8"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">border-light</div>
+        <div class="swatch-hex">#C8CDD8</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="palette-col">
+    <h3>Proposed (light-creamy)</h3>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#ece9df"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">surface-light <span class="diff-indicator">changed</span></div>
+        <div class="swatch-hex">#ece9df — iTerm Background</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#f5f2e8; border-color:#ddd"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">surface-card-light <span class="diff-indicator">changed</span></div>
+        <div class="swatch-hex">#f5f2e8 — warm off-white</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#353b46"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">primary-light <span class="diff-indicator">changed</span></div>
+        <div class="swatch-hex">#353b46 — iTerm Foreground</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#798798"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">secondary-light <span class="diff-indicator">changed</span></div>
+        <div class="swatch-hex">#798798 — iTerm Ansi 8</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#4a7fa5"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">accent-light <span class="diff-indicator">changed</span></div>
+        <div class="swatch-hex">#4a7fa5 — iTerm Link Color</div>
+      </div>
+    </div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#d3e4ed"></div>
+      <div class="swatch-info">
+        <div class="swatch-label">border-light <span class="diff-indicator">changed</span></div>
+        <div class="swatch-hex">#d3e4ed — iTerm Selection</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="preview-section">
+  <h3>Live Preview</h3>
+  <div class="preview-cards">
+    <div>
+      <div class="preview-label">Current</div>
+      <div class="preview-card current">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7485;margin-bottom:4px">Personal website</div>
+        <div class="heading" style="color:#2A2F3D">About Me</div>
+        <div class="card-inner">
+          <div class="body-text">Building tools at the intersection of research and software.</div>
+          <div class="link">Read more →</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="preview-label">Proposed</div>
+      <div class="preview-card iterm">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#798798;margin-bottom:4px">Personal website</div>
+        <div class="heading" style="color:#353b46">About Me</div>
+        <div class="card-inner">
+          <div class="body-text">Building tools at the intersection of research and software.</div>
+          <div class="link">Read more →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

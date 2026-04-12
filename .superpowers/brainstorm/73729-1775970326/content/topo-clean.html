@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0d0d0d; color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 100vh; padding: 28px; gap: 16px;
+}
+h1 { font-size: 1.1rem; font-weight: 700; color: #f9f9f7; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; max-width: 800px; }
+.panel { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+canvas { display: block; border-radius: 10px; background: #0a0a0a; }
+.label { font-size: 0.72rem; color: #6b7280; text-align: center; }
+.label em { color: #6ee7b7; font-style: normal; }
+</style>
+</head>
+<body>
+<h1>Topological Gradient · ∇ℒ fires on cohomology simplices</h1>
+<div class="row">
+  <div class="panel">
+    <canvas id="c1" width="360" height="360"></canvas>
+    <div class="label">H₁ · circle — <em>chord edges</em> + ∇ℒ on endpoints</div>
+  </div>
+  <div class="panel">
+    <canvas id="c2" width="360" height="360"></canvas>
+    <div class="label">H₂ · sphere — <em>all cells</em> → radial ∇ℒ outward</div>
+  </div>
+</div>
+
+<script>
+// Shared clock
+let T = 0;
+
+// Pop cycle: 0..WAIT show static, WAIT..WAIT+POP flash, then fade back in
+const WAIT = 130, POP = 30, REFORM = 60, TOTAL = WAIT + POP + REFORM;
+
+function popPhase() {
+  const c = T % TOTAL;
+  if (c < WAIT)         return { arrows: 1.0, flash: 0, opacity: 1 };
+  if (c < WAIT + POP)   { const p=(c-WAIT)/POP; return { arrows: 1-p, flash: p, opacity: 1 }; }
+  const p=(c-WAIT-POP)/REFORM;
+  return { arrows: 0, flash: 0, opacity: p };
+}
+
+function arrow(ctx, x, y, nx, ny, len, alpha) {
+  const ex=x+nx*len, ey=y+ny*len, h=6, a=Math.atan2(ny,nx);
+  ctx.globalAlpha=alpha;
+  ctx.strokeStyle='#6ee7b7'; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(ex,ey);
+  ctx.lineTo(ex-h*Math.cos(a-0.4), ey-h*Math.sin(a-0.4));
+  ctx.moveTo(ex,ey);
+  ctx.lineTo(ex-h*Math.cos(a+0.4), ey-h*Math.sin(a+0.4));
+  ctx.stroke(); ctx.globalAlpha=1;
+}
+
+// ── H1: CIRCLE ───────────────────────────────────────────────────────────────
+const drawCircle = (() => {
+  const cv=document.getElementById('c1'), ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height, cx=W/2, cy=H/2, R=W*0.34;
+  const N=36;
+  // Cells on ring
+  const cells=Array.from({length:N},(_,i)=>{
+    const a=(i/N)*Math.PI*2;
+    return {x:Math.cos(a),y:Math.sin(a)};
+  });
+  // Chord cocycle edges (skip ~N/3..N/2 positions — these span the loop interior)
+  const chords=[];
+  const skip=Math.round(N/3);
+  for(let i=0;i<N;i+=3) chords.push([i,(i+skip)%N]);
+  // Cocycle vertices
+  const coV=new Set(); chords.forEach(([a,b])=>{coV.add(a);coV.add(b);});
+  // Net gradient per cocycle vertex: away from each chord partner, normalized
+  const grad=Array.from({length:N},()=>({x:0,y:0}));
+  chords.forEach(([a,b])=>{
+    const dx=cells[a].x-cells[b].x, dy=cells[a].y-cells[b].y;
+    const l=Math.hypot(dx,dy);
+    grad[a].x+=dx/l; grad[a].y+=dy/l;
+    grad[b].x-=dx/l; grad[b].y-=dy/l;
+  });
+  for(let i=0;i<N;i++){const l=Math.hypot(grad[i].x,grad[i].y)||1;grad[i].x/=l;grad[i].y/=l;}
+
+  return ()=>{
+    const {arrows,flash,opacity}=popPhase();
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=opacity;
+
+    // Ring edges
+    for(let i=0;i<N;i++){
+      const a=cells[i], b=cells[(i+1)%N];
+      ctx.strokeStyle='rgba(31,41,55,0.8)'; ctx.lineWidth=0.8;
+      ctx.beginPath(); ctx.moveTo(cx+a.x*R,cy-a.y*R); ctx.lineTo(cx+b.x*R,cy-b.y*R); ctx.stroke();
+    }
+    // Chord edges
+    chords.forEach(([a,b])=>{
+      ctx.strokeStyle='rgba(16,185,129,0.35)'; ctx.lineWidth=0.9;
+      ctx.beginPath(); ctx.moveTo(cx+cells[a].x*R,cy-cells[a].y*R); ctx.lineTo(cx+cells[b].x*R,cy-cells[b].y*R); ctx.stroke();
+    });
+    // Cells
+    for(let i=0;i<N;i++){
+      const p=cells[i]; const isCo=coV.has(i);
+      ctx.beginPath(); ctx.arc(cx+p.x*R,cy-p.y*R,isCo?3.5:2,0,Math.PI*2);
+      ctx.fillStyle=isCo?'#10b981':'#374151'; ctx.fill();
+    }
+    // Gradient arrows on cocycle vertices
+    if(arrows>0.01){
+      for(const i of coV){
+        const p=cells[i], g=grad[i];
+        const sx=cx+p.x*R, sy=cy-p.y*R;
+        arrow(ctx, sx+g.x*5, sy-g.y*5, g.x,-g.y, 18, arrows*0.9);
+      }
+    }
+    // Flash
+    if(flash>0.01){ctx.fillStyle=`rgba(110,231,183,${flash*0.25})`; ctx.fillRect(0,0,W,H);}
+    ctx.globalAlpha=1;
+  };
+})();
+
+// ── H2: SPHERE ───────────────────────────────────────────────────────────────
+const drawSphere = (() => {
+  const cv=document.getElementById('c2'), ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height, cx=W/2, cy=H/2, R=W*0.34;
+  const N=56;
+  const ga=Math.PI*(3-Math.sqrt(5));
+  const pts=Array.from({length:N},(_,i)=>{
+    const y=1-(i/(N-1))*2, r=Math.sqrt(Math.max(0,1-y*y)), th=ga*i;
+    return {x:r*Math.cos(th),y,z:r*Math.sin(th)};
+  });
+  // All cells are cohomology vertices for H2 on sphere
+  // Some are green, some gray (like the image), roughly random 60%
+  const isGreen=new Uint8Array(N);
+  const rng=(seed=>()=>{seed=seed*16807%2147483647;return(seed-1)/2147483646;})(42);
+  pts.forEach((_,i)=>{if(rng()>0.38)isGreen[i]=1;});
+
+  const EDGE_T=0.52;
+  const edges=[];
+  for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+    const dot=pts[i].x*pts[j].x+pts[i].y*pts[j].y+pts[i].z*pts[j].z;
+    if(dot>EDGE_T)edges.push({i,j});
+  }
+
+  function rotY(p,a){const c=Math.cos(a),s=Math.sin(a);return{x:p.x*c+p.z*s,y:p.y,z:-p.x*s+p.z*c};}
+
+  return ()=>{
+    const {arrows,flash,opacity}=popPhase();
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=opacity;
+
+    const a=T*0.005;
+    const rot=pts.map(p=>rotY(p,a));
+    // Project: simple orthographic
+    const proj=rot.map(p=>({sx:cx+p.x*R, sy:cy-p.y*R, z:p.z}));
+    const order=Array.from({length:N},(_,i)=>i).sort((a,b)=>proj[a].z-proj[b].z);
+
+    // Edges
+    for(const e of edges){
+      const pa=proj[e.i],pb=proj[e.j];
+      const dep=Math.max(0,((pa.z+pb.z)/2+1)*0.5);
+      ctx.strokeStyle=`rgba(31,41,55,${dep*0.7})`; ctx.lineWidth=0.7;
+      ctx.beginPath(); ctx.moveTo(pa.sx,pa.sy); ctx.lineTo(pb.sx,pb.sy); ctx.stroke();
+    }
+
+    // Arrows on green cells — radially outward in screen space
+    if(arrows>0.01){
+      for(let i=0;i<N;i++){
+        if(!isGreen[i]) continue;
+        const p=proj[i];
+        const dx=p.sx-cx, dy=p.sy-cy, l=Math.hypot(dx,dy); if(l<2)continue;
+        const dep=Math.max(0,(p.z+1)*0.5);
+        // Both front AND back cells get arrows (back are dimmer)
+        const a=arrows*(0.15+dep*0.85);
+        arrow(ctx, p.sx+(dx/l)*5, p.sy+(dy/l)*5, dx/l,dy/l, 18, a);
+      }
+    }
+
+    // Cells back-to-front
+    for(const i of order){
+      const p=proj[i]; const g=isGreen[i];
+      const dep=0.2+Math.max(0,(p.z+1)*0.5)*0.8;
+      const r=1.5+dep*1.8;
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,Math.max(1.2,r),0,Math.PI*2);
+      ctx.fillStyle=g?`rgba(16,185,129,${dep*0.85})`:`rgba(55,65,81,${dep*0.6})`;
+      ctx.fill();
+    }
+
+    if(flash>0.01){ctx.fillStyle=`rgba(110,231,183,${flash*0.25})`; ctx.fillRect(0,0,W,H);}
+    ctx.globalAlpha=1;
+  };
+})();
+
+function loop(){ drawCircle(); drawSphere(); T++; requestAnimationFrame(loop); }
+loop();
+</script>
+</body>
+</html>

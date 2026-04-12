@@ -6,7 +6,7 @@ function getInitialDark(): boolean {
   if (typeof window === 'undefined') return false
   const stored = localStorage.getItem(STORAGE_KEY)
   if (stored) return stored === 'dark'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
+  return false
 }
 
 export function useTheme() {

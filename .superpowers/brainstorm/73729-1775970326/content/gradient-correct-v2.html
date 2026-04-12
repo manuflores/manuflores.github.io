@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0f0f0f;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  padding: 32px 40px;
+  min-height: 100vh;
+}
+h1 { font-size: 1.3rem; font-weight: 700; color: #f9f9f7; margin-bottom: 5px; letter-spacing: -0.02em; }
+.subtitle { color: #6b7280; font-size: 0.82rem; margin-bottom: 24px; }
+.main { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+canvas { display: block; width: 100%; border-radius: 10px; background: #0d0d0d; }
+.sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+.card {
+  background: #181818;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 14px;
+}
+.card-title { font-size: 0.78rem; font-weight: 600; color: #e5e7eb; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: #9ca3af; margin-bottom: 6px; }
+.swatch { width: 24px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+.dot-swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.card.math { border-color: rgba(16,185,129,0.25); }
+.card.math .card-title { color: #10b981; }
+.math-eq { font-family: 'Georgia', serif; font-style: italic; font-size: 0.88rem; color: #d1d5db; margin: 8px 0; line-height: 1.6; }
+.math-eq sub { font-size: 0.65em; }
+.math-note { font-size: 0.7rem; color: #6b7280; line-height: 1.5; }
+
+.mini-canvas-wrap { margin-top: 10px; }
+canvas.mini { height: auto; border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<h1>Topological Gradient on a Cell Manifold — Corrected</h1>
+<p class="subtitle">Cocycle representative edges · sparse ∇ℒ vectors on endpoint cells only · (b,d) → (d,d)</p>
+
+<div class="main">
+
+  <!-- MAIN CANVAS -->
+  <canvas id="cmain" width="520" height="420"></canvas>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="card">
+      <div class="card-title">Visual key</div>
+      <div class="legend-item">
+        <div class="dot-swatch" style="background:#374151"></div>
+        Cell with zero gradient
+      </div>
+      <div class="legend-item">
+        <div class="dot-swatch" style="background:#6ee7b7; box-shadow:0 0 4px #6ee7b7"></div>
+        Cocycle-vertex cell (∇ℒ ≠ 0)
+      </div>
+      <div class="legend-item">
+        <div class="swatch" style="background:#10b981; box-shadow:0 0 6px #10b981"></div>
+        Cocycle representative edge
+      </div>
+      <div class="legend-item">
+        <div class="swatch" style="background:#6ee7b7; height:1px; width:20px; position:relative">
+          <span style="position:absolute;right:-4px;top:-5px;font-size:10px;color:#6ee7b7">→</span>
+        </div>
+        ∇ℒ: push edge length → death_time
+      </div>
+      <div class="legend-item" style="margin-top:4px">
+        <div class="swatch" style="background:#1f2937"></div>
+        Rips neighbor edges (context only)
+      </div>
+    </div>
+
+    <div class="card math">
+      <div class="card-title">What the gradient IS</div>
+      <div class="math-eq">
+        ℒ = Σ<sub>ρ∈C</sub> [f(ρ) − f′(ρ)]²
+      </div>
+      <div class="math-note">
+        <b>C</b> = cohomology representative edges of the largest H₁ class.<br><br>
+        <b>∇ℒ w.r.t. cell positions</b> is nonzero only at vertices of C — the arrows you see.<br><br>
+        Direction: push edge length toward <b>death_time</b> → sends (b,d) to the diagonal → loop "disappears".
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What was wrong</div>
+      <div style="font-size:0.72rem;color:#9ca3af;line-height:1.6">
+        ✗ Smooth vortex field around holes<br>
+        &nbsp;&nbsp;→ unrelated to the Rips filtration<br>
+        &nbsp;&nbsp;→ gradient is dense, not sparse<br><br>
+        ✓ Sparse ∇ℒ on cocycle edge vertices<br>
+        &nbsp;&nbsp;→ gradient lives on critical cells only<br>
+        &nbsp;&nbsp;→ direction is determined by the cohomology representative geometry
+      </div>
+    </div>
+
+    <!-- mini persistence diagram -->
+    <div class="card">
+      <div class="card-title">Persistence diagram: goal</div>
+      <canvas id="cpers" width="280" height="140" class="mini"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── MAIN CANVAS: Ring manifold + cocycle edges + gradient arrows ─────────────
+;(function() {
+  const c = document.getElementById('cmain');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const cx = W*0.5, cy = H*0.5;
+  const R = Math.min(W,H)*0.36;
+  const N = 38;
+  const SPEED = 0.0007; // ring rotation speed
+
+  // Cohomology representative edges (cocycle):
+  // These are chord-like edges that "span" the loop interior —
+  // NOT neighbor edges. They represent the H1 cocycle class.
+  // Pattern: connect cell i to cell (i + skip) % N, with skip ≈ N/3–N/2
+  // Varied to spread around the ring like the PDF figure
+  const rawCocycle = [
+    [0,  15], [4,  19], [8,  23], [12, 27],
+    [16, 31], [20, 35], [24,  3], [28,  7],
+    [2,  18], [6,  22], [10, 26], [14, 30],
+  ];
+
+  // Build cocycle edge list and vertex set
+  const coEdges = rawCocycle.map(([i0,i1])=>({i0, i1}));
+  const coVertSet = new Set();
+  coEdges.forEach(e=>{coVertSet.add(e.i0);coVertSet.add(e.i1);});
+
+  // Cell position as function of index and time (rotation)
+  function pos(i, t) {
+    const a = (i/N)*2*Math.PI + t*SPEED;
+    return { x: cx + R*Math.cos(a), y: cy + R*Math.sin(a) };
+  }
+
+  // Arrow drawing helper
+  function drawArrow(ctx, x, y, dx, dy, len, alpha) {
+    const nx = dx, ny = dy; // already normalized
+    const ax = x + nx*len, ay = y + ny*len;
+    const headLen = 5;
+    const angle = Math.atan2(ny, nx);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(ax, ay);
+    // arrowhead
+    ctx.lineTo(ax - headLen*Math.cos(angle-0.4), ay - headLen*Math.sin(angle-0.4));
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - headLen*Math.cos(angle+0.4), ay - headLen*Math.sin(angle+0.4));
+    ctx.strokeStyle = `rgba(110,231,183,${alpha})`;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d0d'; ctx.fillRect(0,0,W,H);
+
+    const pulse = 0.6 + 0.4*Math.sin(t*0.05);
+    const arrowPulse = 0.55 + 0.45*Math.sin(t*0.05 + 0.8);
+
+    // ── Precompute all positions
+    const positions = Array.from({length:N}, (_,i)=>pos(i,t));
+
+    // ── Draw neighbor edges (faint: the Rips 1-skeleton context)
+    for (let i=0; i<N; i++) {
+      const j = (i+1)%N;
+      const pi=positions[i], pj=positions[j];
+      ctx.strokeStyle='rgba(31,41,55,0.7)';
+      ctx.lineWidth=0.8;
+      ctx.beginPath(); ctx.moveTo(pi.x,pi.y); ctx.lineTo(pj.x,pj.y); ctx.stroke();
+    }
+
+    // ── Draw cohomology representative edges (cocycle) with glow
+    for (const e of coEdges) {
+      const p0=positions[e.i0], p1=positions[e.i1];
+      // Outer glow
+      ctx.strokeStyle=`rgba(16,185,129,${0.06*pulse})`;
+      ctx.lineWidth=6;
+      ctx.shadowBlur=0;
+      ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke();
+      // Core line
+      ctx.strokeStyle=`rgba(16,185,129,${0.55*pulse})`;
+      ctx.lineWidth=1.2;
+      ctx.shadowColor='#10b981'; ctx.shadowBlur=6;
+      ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke();
+      ctx.shadowBlur=0;
+    }
+
+    // ── Draw gradient arrows on cocycle vertices
+    // For each edge (i0,i1): arrow on i0 points away from i1, and vice versa
+    const arrowDrawn = new Map(); // cell → accumulated direction
+    for (const e of coEdges) {
+      const p0=positions[e.i0], p1=positions[e.i1];
+      const dx=p0.x-p1.x, dy=p0.y-p1.y;
+      const len=Math.hypot(dx,dy);
+      const nx=dx/len, ny=dy/len;
+      // cell i0: arrow direction = away from i1 = (p0-p1) normalized
+      if(!arrowDrawn.has(e.i0)) arrowDrawn.set(e.i0,{x:0,y:0,n:0});
+      const d0=arrowDrawn.get(e.i0); d0.x+=nx; d0.y+=ny; d0.n++;
+      // cell i1: arrow direction = away from i0 = (p1-p0) normalized
+      if(!arrowDrawn.has(e.i1)) arrowDrawn.set(e.i1,{x:0,y:0,n:0});
+      const d1=arrowDrawn.get(e.i1); d1.x+=-nx; d1.y+=-ny; d1.n++;
+    }
+    for (const [ci, d] of arrowDrawn) {
+      const p=positions[ci];
+      const dn=Math.hypot(d.x,d.y);
+      if(dn<0.001) continue;
+      const nx=d.x/dn, ny=d.y/dn;
+      // Start arrow slightly off cell center
+      drawArrow(ctx, p.x+nx*4, p.y+ny*4, nx, ny, 14, arrowPulse);
+    }
+
+    // ── Draw cells
+    for (let i=0; i<N; i++) {
+      const p=positions[i];
+      const isCo=coVertSet.has(i);
+      if (isCo) {
+        // Bright: cocycle vertex — non-zero gradient
+        ctx.beginPath(); ctx.arc(p.x,p.y,3.5,0,Math.PI*2);
+        ctx.fillStyle=`rgba(110,231,183,${0.7+0.3*pulse})`;
+        ctx.shadowColor='#6ee7b7'; ctx.shadowBlur=8;
+        ctx.fill(); ctx.shadowBlur=0;
+      } else {
+        // Dim: zero gradient
+        ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fillStyle='rgba(55,65,81,0.7)';
+        ctx.fill();
+      }
+    }
+
+    // ── Label: "H₁ loop" annotation
+    ctx.font='11px -apple-system, sans-serif';
+    ctx.fillStyle='rgba(107,114,128,0.7)';
+    ctx.textAlign='center';
+    ctx.fillText('Cell manifold (ring = H₁ loop)', cx, H - 18);
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─── MINI PERSISTENCE DIAGRAM ─────────────────────────────────────────────────
+;(function() {
+  const c = document.getElementById('cpers');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const pad = 28;
+  const plotW = W-pad*2, plotH = H-pad*2;
+
+  // The class (b,d) moves toward (d,d) = diagonal
+  let t = 0;
+  const b = 0.25, d = 0.75; // normalized birth/death
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d0d'; ctx.fillRect(0,0,W,H);
+
+    // Axes
+    ctx.strokeStyle='rgba(75,85,99,0.5)';
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(pad,pad); ctx.lineTo(pad,pad+plotH); ctx.lineTo(pad+plotW,pad+plotH);
+    ctx.stroke();
+
+    // Diagonal
+    ctx.strokeStyle='rgba(75,85,99,0.35)';
+    ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(pad,pad+plotH); ctx.lineTo(pad+plotW,pad); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Axis labels
+    ctx.font='9px sans-serif';
+    ctx.fillStyle='rgba(107,114,128,0.7)';
+    ctx.textAlign='center';
+    ctx.fillText('birth', pad+plotW/2, pad+plotH+16);
+    ctx.save(); ctx.translate(10, pad+plotH/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('death', 0, 0); ctx.restore();
+
+    // Animate: point moves from (b,d) to (d,d)
+    const phase = (Math.sin(t*0.025)*0.5+0.5); // 0→1→0
+    const curB = b + (d-b)*phase;
+    const curD = d;
+
+    // Current point screen coords
+    const sx = val => pad + val*plotW;
+    const sy = val => pad + plotH - val*plotH;
+
+    // Draw point trail
+    for (let i=0;i<8;i++){
+      const f=i/8;
+      const tb=b+(curB-b)*f;
+      ctx.beginPath();
+      ctx.arc(sx(tb),sy(curD),3*(1-f*0.7),0,Math.PI*2);
+      ctx.fillStyle=`rgba(16,185,129,${0.08*(1-f)})`;
+      ctx.fill();
+    }
+
+    // Draw the persistence point
+    ctx.beginPath(); ctx.arc(sx(curB),sy(curD),5,0,Math.PI*2);
+    ctx.fillStyle='#10b981';
+    ctx.shadowColor='#10b981'; ctx.shadowBlur=8;
+    ctx.fill(); ctx.shadowBlur=0;
+
+    // Target on diagonal
+    ctx.beginPath(); ctx.arc(sx(d),sy(d),3.5,0,Math.PI*2);
+    ctx.strokeStyle='rgba(110,231,183,0.4)';
+    ctx.lineWidth=1; ctx.stroke();
+
+    // Arrow from point toward diagonal
+    if (curB < d-0.03) {
+      const dx=sx(d)-sx(curB), dy=sy(d)-sy(curD);
+      const len=Math.hypot(dx,dy);
+      ctx.strokeStyle='rgba(16,185,129,0.4)';
+      ctx.lineWidth=1;
+      ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.moveTo(sx(curB),sy(curD)); ctx.lineTo(sx(d),sy(d));
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // Labels
+    ctx.font='9px sans-serif';
+    ctx.fillStyle='rgba(110,231,183,0.6)';
+    ctx.textAlign='left';
+    ctx.fillText('(b,d) → (d,d)', sx(b)+6, sy(d)-8);
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

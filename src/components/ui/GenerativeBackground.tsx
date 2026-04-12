@@ -57,14 +57,14 @@ function colorDark(hueBias: number, t: number): [number, number, number] {
   return [31, 41, 55]
 }
 
-/** Royal Blue / Ink palette (light) */
+/** Airy blue / cream palette (light) — iTerm light-creamy blues + greys */
 function colorLight(hueBias: number, t: number): [number, number, number] {
   const v = (Math.sin(t * 2) * 0.5 + 0.5) * 0.7 + hueBias * 0.3
-  if (v > 0.75) return [65, 105, 225]
-  if (v > 0.6) return [100, 130, 200]
-  if (v > 0.45) return [140, 155, 185]
-  if (v > 0.25) return [185, 192, 210]
-  return [35, 42, 65]
+  if (v > 0.75) return [107, 159, 187]   // #6b9fbb — steel blue
+  if (v > 0.6)  return [118, 155, 180]   // mid blue-grey
+  if (v > 0.45) return [145, 172, 192]   // light blue-grey
+  if (v > 0.25) return [178, 198, 212]   // pale airy blue
+  return [53, 59, 70]                    // #353b46 — dark ink
 }
 
 interface Props {
@@ -151,7 +151,7 @@ export default function GenerativeBackground({ variant = 'full', opacity }: Prop
 
         p.setup = () => {
           const dark = document.documentElement.classList.contains('dark')
-          bg = dark ? [18, 18, 18] : [250, 249, 247]
+          bg = dark ? [18, 18, 18] : [236, 233, 223]
           getColor = dark ? colorDark : colorLight
 
           const c = p.createCanvas(el.offsetWidth, el.offsetHeight)

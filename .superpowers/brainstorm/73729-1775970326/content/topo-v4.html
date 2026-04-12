@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0d0d0d; color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 100vh; padding: 28px; gap: 16px;
+}
+h1 { font-size: 1.1rem; font-weight: 700; color: #f9f9f7; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; max-width: 820px; }
+.panel { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+canvas { display: block; border-radius: 10px; background: #0a0a0a; }
+.lbl { font-size: 0.7rem; color: #6b7280; text-align: center; }
+.lbl em { color: #6ee7b7; font-style: normal; }
+</style>
+</head>
+<body>
+<h1>Topological Gradient · cohomology simplices pop outward</h1>
+<div class="row">
+  <div class="panel">
+    <canvas id="c1" width="380" height="380"></canvas>
+    <div class="lbl">H₁ · circle — gradient on cells in <em>one arc</em> (π/6 – π/2)</div>
+  </div>
+  <div class="panel">
+    <canvas id="c2" width="380" height="380"></canvas>
+    <div class="lbl">H₂ · sphere — gradient on cells in <em>one cap</em></div>
+  </div>
+</div>
+
+<script>
+// ── Seeded RNG so layout is consistent ────────────────────────────────────────
+function mkRng(seed) {
+  let s = seed;
+  return () => { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; };
+}
+
+// ── Arrow helper ──────────────────────────────────────────────────────────────
+function arrow(ctx, x, y, nx, ny, len, alpha) {
+  if (alpha < 0.01) return;
+  const ex = x+nx*len, ey = y+ny*len, h = 6, a = Math.atan2(ny, nx);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = '#6ee7b7'; ctx.lineWidth = 1.5;
+  ctx.shadowColor = '#6ee7b7'; ctx.shadowBlur = 6;
+  ctx.beginPath();
+  ctx.moveTo(x, y); ctx.lineTo(ex, ey);
+  ctx.lineTo(ex - h*Math.cos(a-0.42), ey - h*Math.sin(a-0.42));
+  ctx.moveTo(ex, ey);
+  ctx.lineTo(ex - h*Math.cos(a+0.42), ey - h*Math.sin(a+0.42));
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ── Shared animation: steady → arrows pulse → pop flash → reform ──────────────
+let T = 0;
+const STEADY = 100, PULSE = 60, FLASH = 20, REFORM = 50;
+const TOTAL   = STEADY + PULSE + FLASH + REFORM;
+function phase() {
+  const c = T % TOTAL;
+  if (c < STEADY) return { a: 0, flash: 0, op: 1 };
+  if (c < STEADY+PULSE) {
+    const p = (c-STEADY)/PULSE;
+    return { a: p, flash: 0, op: 1 };
+  }
+  if (c < STEADY+PULSE+FLASH) {
+    const p = (c-STEADY-PULSE)/FLASH;
+    return { a: 1-p, flash: p, op: 1 };
+  }
+  const p = (c-STEADY-PULSE-FLASH)/REFORM;
+  return { a: 0, flash: 0, op: p };
+}
+
+// ── H1: CIRCLE ───────────────────────────────────────────────────────────────
+const drawCircle = (() => {
+  const cv = document.getElementById('c1');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height, cx = W/2, cy = H/2;
+  const R = W * 0.33;                // display radius
+  const rng = mkRng(17);
+
+  // Sample N points: random angles on a noisy ring (real manifold samples)
+  const N = 52;
+  const angles = Array.from({length:N}, () => rng() * Math.PI * 2).sort((a,b)=>a-b);
+  const pts = angles.map(a => {
+    const r = 1 + (rng()-0.5)*0.12;  // radial noise
+    return {
+      x: r * Math.cos(a) + (rng()-0.5)*0.04,
+      y: r * Math.sin(a) + (rng()-0.5)*0.04,
+      angle: a
+    };
+  });
+
+  // Rips ε: chosen so each point connects to ~4-6 neighbors
+  // On unit circle with N=52: mean spacing ≈ 2π/52 ≈ 0.12, ε ≈ 0.28
+  const EPS = 0.30;
+  const ripsEdges = [];
+  for (let i=0;i<N;i++) for (let j=i+1;j<N;j++) {
+    const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+    if (Math.hypot(dx,dy) <= EPS) ripsEdges.push({i,j});
+  }
+
+  // Cohomology representative cells: clustered in arc [π/6, π/2]
+  const LO = Math.PI/6, HI = Math.PI/2;
+  const coV = new Set();
+  pts.forEach((p,i) => {
+    const a = ((p.angle % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+    if (a >= LO && a <= HI) coV.add(i);
+  });
+
+  // Gradient direction: radially outward (away from ring center)
+  // For each cocycle cell, arrow points in direction of (cos angle, sin angle)
+  return () => {
+    const { a: arrowA, flash, op } = phase();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha = op;
+
+    // Rips edges — all roughly same length ε
+    ctx.strokeStyle = 'rgba(31,41,55,0.75)'; ctx.lineWidth = 0.8;
+    for (const e of ripsEdges) {
+      const p=pts[e.i], q=pts[e.j];
+      ctx.beginPath();
+      ctx.moveTo(cx+p.x*R, cy-p.y*R);
+      ctx.lineTo(cx+q.x*R, cy-q.y*R);
+      ctx.stroke();
+    }
+
+    // Cells
+    for (let i=0;i<N;i++) {
+      const p=pts[i], isCo=coV.has(i);
+      ctx.beginPath();
+      ctx.arc(cx+p.x*R, cy-p.y*R, isCo?3.4:2.2, 0, Math.PI*2);
+      ctx.fillStyle = isCo ? '#10b981' : '#374151';
+      if (isCo) { ctx.shadowColor='#10b981'; ctx.shadowBlur=4; }
+      ctx.fill(); ctx.shadowBlur=0;
+    }
+
+    // Gradient arrows — outward radially, only on cocycle cells
+    for (const i of coV) {
+      const p=pts[i];
+      const l = Math.hypot(p.x,p.y); if(l<0.01) continue;
+      const nx=p.x/l, ny=-p.y/l; // screen: y flipped
+      const sx=cx+p.x*R, sy=cy-p.y*R;
+      arrow(ctx, sx+nx*5, sy+ny*5, nx, ny, 20, arrowA);
+    }
+
+    if (flash>0.01) {
+      ctx.fillStyle=`rgba(110,231,183,${flash*0.28})`; ctx.fillRect(0,0,W,H);
+    }
+    ctx.globalAlpha=1;
+  };
+})();
+
+// ── H2: SPHERE ───────────────────────────────────────────────────────────────
+const drawSphere = (() => {
+  const cv = document.getElementById('c2');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height, cx = W/2, cy = H/2;
+  const R = W * 0.33;
+  const rng = mkRng(31);
+
+  // Sample N points on sphere with noise (random spherical coordinates)
+  const N = 70;
+  const pts3D = Array.from({length:N}, () => {
+    // Uniform on sphere via normal distribution
+    let x=rng()*2-1, y=rng()*2-1, z=rng()*2-1;
+    let l=Math.sqrt(x*x+y*y+z*z)||1;
+    x/=l; y/=l; z/=l;
+    // Add small noise
+    x+=(rng()-0.5)*0.07; y+=(rng()-0.5)*0.07; z+=(rng()-0.5)*0.07;
+    l=Math.sqrt(x*x+y*y+z*z)||1;
+    return {x:x/l, y:y/l, z:z/l};
+  });
+
+  // Rips ε on unit sphere (chord distance)
+  // Mean spacing on sphere ≈ sqrt(4π/N) ≈ 0.42 for N=70; ε ≈ 0.55
+  const EPS = 0.58;
+  const ripsEdges = [];
+  for (let i=0;i<N;i++) for (let j=i+1;j<N;j++) {
+    const dx=pts3D[i].x-pts3D[j].x, dy=pts3D[i].y-pts3D[j].y, dz=pts3D[i].z-pts3D[j].z;
+    if (Math.hypot(dx,dy,dz) <= EPS) ripsEdges.push({i,j});
+  }
+
+  // Cohomology representative: cells in a cap (z > 0.45 in ORIGINAL coords)
+  // This localises the gradient to one region of the sphere — as in the image
+  const CAP_THRESH = 0.42;
+  const coV = new Set();
+  pts3D.forEach((p,i) => { if (p.z > CAP_THRESH) coV.add(i); });
+
+  function rotY(p, a) {
+    const c=Math.cos(a), s=Math.sin(a);
+    return {x:p.x*c+p.z*s, y:p.y, z:-p.x*s+p.z*c};
+  }
+
+  return () => {
+    const { a: arrowA, flash, op } = phase();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha = op;
+
+    const ang = T * 0.005;
+    const rot  = pts3D.map(p => rotY(p, ang));
+    const proj = rot.map(p => ({ sx: cx+p.x*R, sy: cy-p.y*R, z: p.z }));
+
+    // Paint back-to-front
+    const order = Array.from({length:N},(_,i)=>i).sort((a,b)=>proj[a].z-proj[b].z);
+
+    // Rips edges (all same scale ε)
+    for (const e of ripsEdges) {
+      const pa=proj[e.i], pb=proj[e.j];
+      const dep=Math.max(0,((pa.z+pb.z)/2+1)*0.5);
+      ctx.strokeStyle=`rgba(31,41,55,${dep*0.8})`; ctx.lineWidth=0.7;
+      ctx.beginPath(); ctx.moveTo(pa.sx,pa.sy); ctx.lineTo(pb.sx,pb.sy); ctx.stroke();
+    }
+
+    // Arrows on cohomology cap cells (outward = radial in 3D → project to screen)
+    for (const i of coV) {
+      const p = proj[i], p3 = rot[i];
+      // 3D outward direction, projected to screen (orthographic: drop z)
+      const dep = Math.max(0, (p.z+1)*0.5);
+      const nx = p3.x, ny = -p3.y; // screen normal (outward)
+      const l = Math.hypot(nx,ny); if(l<0.01) continue;
+      arrow(ctx, p.sx+(nx/l)*5, p.sy+(ny/l)*5, nx/l, ny/l, 20, arrowA*Math.max(0.15, dep));
+    }
+
+    // Cells
+    for (const i of order) {
+      const p=proj[i]; const isCo=coV.has(i);
+      const dep=0.15+Math.max(0,(p.z+1)*0.5)*0.85;
+      const r=1.5+dep*2;
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,Math.max(1.2,r),0,Math.PI*2);
+      ctx.fillStyle=isCo?`rgba(16,185,129,${dep*0.9})`:`rgba(55,65,81,${dep*0.65})`;
+      if(isCo){ctx.shadowColor='#10b981';ctx.shadowBlur=4;}
+      ctx.fill(); ctx.shadowBlur=0;
+    }
+
+    if(flash>0.01){ctx.fillStyle=`rgba(110,231,183,${flash*0.28})`;ctx.fillRect(0,0,W,H);}
+    ctx.globalAlpha=1;
+  };
+})();
+
+function loop() { drawCircle(); drawSphere(); T++; requestAnimationFrame(loop); }
+loop();
+</script>
+</body>
+</html>

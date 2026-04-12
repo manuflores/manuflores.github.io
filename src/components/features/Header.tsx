@@ -38,7 +38,7 @@ export default function Header() {
         <div className="max-w-3xl mx-auto px-6 flex items-center justify-between">
           <NavLink
             to="/"
-            className="text-xl font-bold text-primary-light dark:text-primary-dark hover:text-accent-light dark:hover:text-accent-dark transition-colors"
+            className="text-xl font-bold text-accent-light dark:text-accent-dark active:text-secondary-light dark:active:text-secondary-dark transition-colors"
           >
             manu flores
           </NavLink>

@@ -1,0 +1,117 @@
+<h2>Creamy + Airy Blue — 3 directions</h2>
+<p class="subtitle">The background stays linen. The question is how blue and how bright the text/accents go.</p>
+
+<style>
+.cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 20px; }
+.card { border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
+.card.selected { border-color: #6b9fbb !important; }
+.card-preview {
+  padding: 20px;
+  font-family: system-ui, sans-serif;
+}
+.card-preview .label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; opacity: .6;
+}
+.card-preview .title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.card-preview .body { font-size: 12px; line-height: 1.6; margin-bottom: 10px; }
+.card-preview .link { font-size: 12px; font-weight: 600; text-decoration: underline; }
+.card-preview .inner {
+  border-radius: 8px; padding: 12px; margin-top: 8px; border: 1px solid;
+}
+.card-preview .nav {
+  display: flex; gap: 12px; font-size: 11px; font-weight: 600; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid;
+}
+.card-footer {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(0,0,0,.04);
+}
+.swatches { display: flex; gap: 6px; margin-top: 10px; }
+.sw { width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(0,0,0,.08); }
+</style>
+
+<div class="cards">
+
+  <!-- Option A: Current -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)" style="border-color: #e0ddd4">
+    <div class="card-preview" style="background:#ece9df">
+      <div class="nav" style="color:#798798; border-color:#d3e4ed">
+        <span style="color:#4a7fa5">Home</span>
+        <span>About</span>
+        <span>Work</span>
+      </div>
+      <div class="label" style="color:#798798">current</div>
+      <div class="title" style="color:#353b46">About Me</div>
+      <div class="body" style="color:#798798">Building tools at the intersection of research and software.</div>
+      <div class="inner" style="background:#f5f2e8; border-color:#d3e4ed">
+        <div class="body" style="color:#798798">Some project description here with details.</div>
+        <div class="link" style="color:#4a7fa5">Read more →</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      A — Current (muted steel)
+      <div class="swatches">
+        <div class="sw" style="background:#ece9df" title="bg"></div>
+        <div class="sw" style="background:#353b46" title="text"></div>
+        <div class="sw" style="background:#4a7fa5" title="accent"></div>
+        <div class="sw" style="background:#798798" title="muted"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Airy blue text + brighter accent -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)" style="border-color: #e0ddd4">
+    <div class="card-preview" style="background:#ece9df">
+      <div class="nav" style="color:#8bbbd2; border-color:#cce5f0">
+        <span style="color:#5b9fbb">Home</span>
+        <span>About</span>
+        <span>Work</span>
+      </div>
+      <div class="label" style="color:#8bbbd2">airy blue</div>
+      <div class="title" style="color:#2e4a5a">About Me</div>
+      <div class="body" style="color:#6b9fbb">Building tools at the intersection of research and software.</div>
+      <div class="inner" style="background:#f5f2e8; border-color:#cce5f0">
+        <div class="body" style="color:#6b9fbb">Some project description here with details.</div>
+        <div class="link" style="color:#4a8fb0">Read more →</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      B — Airy blue (blue as body text)
+      <div class="swatches">
+        <div class="sw" style="background:#ece9df" title="bg"></div>
+        <div class="sw" style="background:#2e4a5a" title="text"></div>
+        <div class="sw" style="background:#4a8fb0" title="accent"></div>
+        <div class="sw" style="background:#6b9fbb" title="muted"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C: Cooler cream + sky blue -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)" style="border-color: #e0ddd4">
+    <div class="card-preview" style="background:#eaecef">
+      <div class="nav" style="color:#8bafc4; border-color:#c5dae8">
+        <span style="color:#4a95bb">Home</span>
+        <span>About</span>
+        <span>Work</span>
+      </div>
+      <div class="label" style="color:#8bafc4">cooler</div>
+      <div class="title" style="color:#2a3d4d">About Me</div>
+      <div class="body" style="color:#5a8aa5">Building tools at the intersection of research and software.</div>
+      <div class="inner" style="background:#f2f5f8; border-color:#c5dae8">
+        <div class="body" style="color:#5a8aa5">Some project description here with details.</div>
+        <div class="link" style="color:#3a85b0">Read more →</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      C — Cool blue-cream bg
+      <div class="swatches">
+        <div class="sw" style="background:#eaecef" title="bg"></div>
+        <div class="sw" style="background:#2a3d4d" title="text"></div>
+        <div class="sw" style="background:#3a85b0" title="accent"></div>
+        <div class="sw" style="background:#5a8aa5" title="muted"></div>
+      </div>
+    </div>
+  </div>
+
+</div>

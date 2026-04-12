@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0f0f0f;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  padding: 36px 40px;
+  min-height: 100vh;
+}
+h1 { font-size: 1.3rem; font-weight: 700; color: #f9f9f7; margin-bottom: 6px; letter-spacing: -0.02em; }
+.subtitle { color: #6b7280; font-size: 0.85rem; margin-bottom: 28px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.panel { background: #181818; border: 1.5px solid #2a2a2a; border-radius: 12px; padding: 14px; }
+.panel.correct { border-color: #10b981; box-shadow: 0 0 0 1px rgba(16,185,129,0.2); }
+.panel.wrong { border-color: #374151; }
+canvas { display: block; width: 100%; border-radius: 8px; background: #0d0d0d; margin-bottom: 12px; }
+.label { font-size: 0.65rem; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; }
+.label.correct { color: #10b981; }
+.label.wrong { color: #6b7280; }
+.panel-title { font-size: 0.9rem; font-weight: 600; color: #e5e7eb; margin-bottom: 6px; }
+.panel-desc { font-size: 0.76rem; color: #9ca3af; line-height: 1.55; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #6b7280; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<h1>Topological Gradient — Corrected Concept</h1>
+<p class="subtitle">Flow <em>along</em> the cell manifold skeleton, gradient concentrated on critical edges</p>
+
+<div class="row">
+
+  <!-- LEFT: What I showed (wrong) -->
+  <div class="panel wrong">
+    <div class="label wrong">✗ What I showed</div>
+    <canvas id="cwrong" width="340" height="200"></canvas>
+    <div class="panel-title">Smooth vortex field around holes</div>
+    <p class="panel-desc">Arbitrary point vortices create rotation. The "topology" isn't derived from the cell data — it's just fluid dynamics. The flow has no relationship to the Rips complex or critical edges.</p>
+  </div>
+
+  <!-- RIGHT: Corrected concept -->
+  <div class="panel correct">
+    <div class="label correct">✓ Corrected concept</div>
+    <canvas id="ccorrect" width="340" height="200"></canvas>
+    <div class="panel-title">Gradient along the cell manifold</div>
+    <p class="panel-desc">Cells flow <em>along</em> the manifold (a ring = cell cycle). The topological gradient score — highest near the critical edge — drives brightness & pacing. Critical edge shown in teal: where persistence is most sensitive to perturbation.</p>
+    <div class="legend">
+      <div class="legend-item"><div class="dot" style="background:#10b981"></div> Critical edge (H₁ generator)</div>
+      <div class="legend-item"><div class="dot" style="background:#6ee7b7"></div> High gradient magnitude</div>
+      <div class="legend-item"><div class="dot" style="background:#374151"></div> Low gradient magnitude</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── LEFT: Smooth vortex (wrong version) ─────────────────────────────────────
+;(function() {
+  const c = document.getElementById('cwrong');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const holes = [{x:W*.35,y:H*.5},{x:W*.65,y:H*.5}];
+  const NP = 90;
+  const particles = Array.from({length:NP}, ()=>({x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,age:Math.floor(Math.random()*180),life:120+Math.random()*100}));
+  const trail = document.createElement('canvas'); trail.width=W; trail.height=H;
+  const tctx = trail.getContext('2d');
+  tctx.fillStyle='#0d0d0d'; tctx.fillRect(0,0,W,H);
+  function field(x,y){let fx=0,fy=0;for(const h of holes){const dx=x-h.x,dy=y-h.y;const r2=dx*dx+dy*dy+900;const s=2000/r2;fx+=-dy/Math.sqrt(r2)*s;fy+=dx/Math.sqrt(r2)*s;}return[fx,fy];}
+  function draw(){
+    tctx.fillStyle='rgba(13,13,13,0.055)';tctx.fillRect(0,0,W,H);
+    for(const p of particles){
+      const[fx,fy]=field(p.x,p.y);p.vx=p.vx*.87+fx*.45;p.vy=p.vy*.87+fy*.45;
+      const spd=Math.hypot(p.vx,p.vy);if(spd>2.8){p.vx=p.vx/spd*2.8;p.vy=p.vy/spd*2.8;}
+      p.x+=p.vx;p.y+=p.vy;p.age++;
+      if(p.x<0)p.x+=W;if(p.x>W)p.x-=W;if(p.y<0)p.y+=H;if(p.y>H)p.y-=H;
+      if(p.age>p.life){p.x=Math.random()*W;p.y=Math.random()*H;p.vx=0;p.vy=0;p.age=0;}
+      const a=Math.min(1,p.age/20)*(1-p.age/p.life)*0.6;
+      tctx.fillStyle=`rgba(75,85,99,${a})`;tctx.fillRect(p.x,p.y,1.5,1.5);
+    }
+    ctx.clearRect(0,0,W,H);ctx.drawImage(trail,0,0);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─── RIGHT: Topological gradient on cell manifold (corrected) ────────────────
+;(function() {
+  const c = document.getElementById('ccorrect');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  // Ring-shaped cell manifold (like a cell-cycle UMAP trajectory)
+  const N = 34;
+  const cx = W/2, cy = H/2;
+  const rx = W*0.36, ry = H*0.33;
+
+  // Fixed cell positions on ring with small jitter
+  const cells = Array.from({length:N}, (_, i) => {
+    const a = (i/N)*2*Math.PI;
+    return {
+      x: cx + rx*Math.cos(a) + (Math.random()-.5)*W*0.035,
+      y: cy + ry*Math.sin(a) + (Math.random()-.5)*H*0.035,
+      a, // intrinsic angle parameter
+    };
+  });
+
+  // Compute actual Rips edges for adjacent cells + identify critical edge
+  // In a ring filtration, the critical edge for H1 is the LONGEST adjacent edge
+  // (the MST spanning tree misses this edge; it's the one that closes the cycle)
+  const adjEdges = cells.map((c0, i) => {
+    const c1 = cells[(i+1) % N];
+    return { i0: i, i1: (i+1)%N, len: Math.hypot(c0.x-c1.x, c0.y-c1.y) };
+  });
+
+  // MST over adjacent edges using union-find: the "extra" edge closes the ring
+  const par = Array.from({length:N},(_,i)=>i);
+  const find = x => par[x]===x?x:(par[x]=find(par[x]));
+  const sorted = [...adjEdges].sort((a,b)=>a.len-b.len);
+  let critEdge = null;
+  for (const e of sorted) {
+    const ra=find(e.i0), rb=find(e.i1);
+    if(ra===rb){ critEdge=e; } else { par[ra]=rb; }
+  }
+  // Fallback: longest adjacent edge
+  if (!critEdge) critEdge = adjEdges.reduce((max,e)=>e.len>max.len?e:max, adjEdges[0]);
+
+  // Topological gradient magnitude at each cell:
+  // Highest at the two critical edge endpoints, decays around the ring
+  const critA0 = cells[critEdge.i0].a;
+  function gradMagnitude(a) {
+    // Angular distance from critical edge midpoint
+    let diff = Math.abs(a - critA0);
+    if (diff > Math.PI) diff = 2*Math.PI - diff;
+    // Gradient: highest at critEdge endpoints, falls off with distance
+    return Math.exp(-diff * diff * 0.6);
+  }
+
+  // Flowing particles — parameterized along the ring by angle
+  const NP = 70;
+  const tracers = Array.from({length:NP}, () => ({
+    angle: Math.random()*2*Math.PI,
+    phase: Math.random()*2*Math.PI,
+  }));
+
+  const trail = document.createElement('canvas'); trail.width=W; trail.height=H;
+  const tctx = trail.getContext('2d');
+  tctx.fillStyle='#0d0d0d'; tctx.fillRect(0,0,W,H);
+
+  // Map angle to screen position (follow the cell ring shape)
+  function angleToScreen(a) {
+    return {
+      x: cx + rx*Math.cos(a),
+      y: cy + ry*Math.sin(a),
+    };
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d0d'; ctx.fillRect(0,0,W,H);
+
+    // ── Draw faint Rips edges (non-critical)
+    for (const e of adjEdges) {
+      if (e === critEdge) continue;
+      ctx.strokeStyle='rgba(55,65,81,0.5)';
+      ctx.lineWidth=0.8;
+      ctx.beginPath();
+      ctx.moveTo(cells[e.i0].x, cells[e.i0].y);
+      ctx.lineTo(cells[e.i1].x, cells[e.i1].y);
+      ctx.stroke();
+    }
+
+    // ── Draw critical edge with glow
+    const critPulse = 0.65+0.35*Math.sin(t*0.07);
+    ctx.strokeStyle=`rgba(110,231,183,${critPulse*0.9})`;
+    ctx.lineWidth=2.2;
+    ctx.shadowColor='#6ee7b7'; ctx.shadowBlur=14;
+    ctx.beginPath();
+    ctx.moveTo(cells[critEdge.i0].x, cells[critEdge.i0].y);
+    ctx.lineTo(cells[critEdge.i1].x, cells[critEdge.i1].y);
+    ctx.stroke(); ctx.shadowBlur=0;
+
+    // ── Draw cells colored by topological gradient magnitude
+    for (let i=0; i<N; i++) {
+      const g = gradMagnitude(cells[i].a);
+      const isCrit = (i===critEdge.i0 || i===critEdge.i1);
+      // Interpolate from stone-gray (low grad) to emerald (high grad)
+      const r = Math.round(55 + g*(16-55));
+      const gr = Math.round(65 + g*(185-65));
+      const b = Math.round(81 + g*(129-81));
+      const radius = isCrit ? 3.5 : (2 + g*1.2);
+      ctx.beginPath();
+      ctx.arc(cells[i].x, cells[i].y, radius, 0, Math.PI*2);
+      ctx.fillStyle=`rgb(${r},${gr},${b})`;
+      if (isCrit) { ctx.shadowColor='#10b981'; ctx.shadowBlur=10; }
+      ctx.fill(); ctx.shadowBlur=0;
+    }
+
+    // ── Tracer particles flowing along the manifold
+    // Fade trail
+    tctx.fillStyle='rgba(13,13,13,0.07)'; tctx.fillRect(0,0,W,H);
+
+    for (const tr of tracers) {
+      const g = gradMagnitude(tr.angle);
+      // Speed: base + inverse gradient (slow near critical edge — cell "lingers" in sensitive region)
+      const speed = (0.004 + (1-g)*0.018);
+      tr.angle = (tr.angle + speed + 2*Math.PI) % (2*Math.PI);
+
+      const pos = angleToScreen(tr.angle);
+      const alpha = 0.3 + g*0.45;
+      tctx.fillStyle = g > 0.5
+        ? `rgba(110,231,183,${alpha})`
+        : `rgba(16,185,129,${alpha*0.6})`;
+      tctx.fillRect(pos.x, pos.y, 1.8, 1.8);
+    }
+
+    // Composite trail under cell dots
+    ctx.save();
+    ctx.globalCompositeOperation='destination-over';
+    ctx.drawImage(trail,0,0);
+    ctx.restore();
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
