@@ -78,13 +78,13 @@ html.dark .animated-link::after {
 .prose-custom strong { @apply font-semibold text-primary-light dark:text-primary-dark; }
 
 .prose-custom code:not(pre code) {
-  @apply text-sm px-1.5 py-0.5 rounded
+  @apply font-mono text-sm px-1.5 py-0.5 rounded
     bg-stone-100 dark:bg-neutral-800
     text-primary-light dark:text-primary-dark;
 }
 
 .prose-custom pre {
-  @apply rounded-lg p-4 my-4 overflow-x-auto text-sm
+  @apply font-mono rounded-lg p-4 my-4 overflow-x-auto text-sm
     bg-surface-card-light dark:bg-[#171717]
     border border-border-light dark:border-border-dark;
 }

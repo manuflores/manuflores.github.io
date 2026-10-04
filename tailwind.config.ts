@@ -8,6 +8,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"TASA Orbiter"', 'system-ui', 'sans-serif'],
+        // Local Nerd Font if installed, else Geist Mono from Google Fonts.
+        mono: ['"GeistMono Nerd Font Mono"', '"Geist Mono"', 'ui-monospace', 'Menlo', 'monospace'],
       },
       colors: {
         surface: {
