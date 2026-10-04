@@ -175,8 +175,12 @@ export default function Shell({ open, cwd, onClose, onToggleTheme }: Props) {
 function Prompt({ cwd }: { cwd: string }) {
   return (
     <span className="whitespace-nowrap">
-      <span className={toneClass.green}>manu@flores</span>:
-      <span className={toneClass.accent}>~/{cwd === 'home' ? '' : cwd}</span>$&nbsp;
+      {/* Light: green user + accent path. Dark: the whole user:path in emerald. */}
+      <span className="dark:text-accent-dark">
+        <span className="text-[#6a9870] dark:text-inherit">manu@flores</span>:
+        <span className={toneClass.accent}>~/{cwd === 'home' ? '' : cwd}</span>
+      </span>
+      $&nbsp;
     </span>
   )
 }
