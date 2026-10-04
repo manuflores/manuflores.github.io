@@ -16,11 +16,6 @@ export function useTheme() {
     const root = document.documentElement
     root.classList.toggle('dark', isDark)
     localStorage.setItem(STORAGE_KEY, isDark ? 'dark' : 'light')
-
-    const hljsLight = document.getElementById('hljs-light') as HTMLLinkElement | null
-    const hljsDark = document.getElementById('hljs-dark') as HTMLLinkElement | null
-    if (hljsLight) hljsLight.disabled = isDark
-    if (hljsDark) hljsDark.disabled = !isDark
   }, [isDark])
 
   const toggle = useCallback(() => setIsDark((d) => !d), [])
