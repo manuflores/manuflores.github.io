@@ -2,7 +2,7 @@ import type { Profile, Experience, Education, Track } from '@/types'
 
 export const profile: Profile = {
   name: '',
-  tagline: "Hi, I'm Manu.  I'm building self-improving agents for applications in healthcare at [Cainex](https://cainex.com).",
+  tagline: "Hi, I'm Manu.  I'm a Research Scientist at Lumetec working on Scientific Computing applications for Distributed Acoustic Sensing (DAS).",
   socials: [
     {
       platform: 'github',
@@ -24,9 +24,17 @@ export const profile: Profile = {
 
 export const experience: Experience[] = [
   {
+    organization: 'Lumetec',
+    role: 'Machine Learning Research Scientist',
+    period: 'July 2026 - Present',
+    location: 'Pasadena, California',
+    summary:
+      'Training neural networks & developing scientific computing pipelines for applications for Distributed Acoustic Sensing (DAS).'
+  },
+  {
     organization: 'Cainex',
     role: 'Founding Engineer',
-    period: 'July 2025 - Present',
+    period: 'July 2025 - July 2026',
     location: 'Sunnyvale, California',
     summary: 'Designing agent architectures that can self-improve.'
   },

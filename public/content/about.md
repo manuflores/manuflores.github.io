@@ -1,10 +1,12 @@
-Emanuel Flores Bautista aka Manolo aka Manu the Machine Psychoanalyst.
+Qué onda ! Welcome to my website. 
 
-I have a Ph.D. from Caltech, where I did research in Matt Thomson's group. 
+I'm Manolo, currently working as a Research Scientist in Lumetec. 
 
-Read the summary of my Ph.D. research [here](https://thesis.caltech.edu/17383/).
+Previously I worked building agents for healthcare at Cainex. 
 
-I enjoy creating sound and writing poetry.
+I have a Ph.D. from Caltech, where I did research in Matt Thomson's group.
+
+In my free time I enjoy creating sound, riding my bike and reading.
 
 ---
 
