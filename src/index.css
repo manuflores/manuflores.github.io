@@ -112,7 +112,13 @@ html.dark .hljs-comment, html.dark .hljs-quote { color: #857c6c; }
   @apply my-6 overflow-x-auto;
 }
 
-/* Loop orb: slow breathing while paused */
+/* Orb player: current song's color, set as --song-light / --song-dark */
+.orb-song-bg { background-color: var(--song-light); }
+html.dark .orb-song-bg { background-color: var(--song-dark); }
+.orb-song-text { color: var(--song-light); }
+html.dark .orb-song-text { color: var(--song-dark); }
+
+/* Orb: slow breathing while paused */
 @keyframes orb-breathe {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }

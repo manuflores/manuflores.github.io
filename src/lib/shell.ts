@@ -1,3 +1,5 @@
+import { findSong, songs } from '@/data/songs'
+
 export interface Section {
   name: string
   path: string
@@ -8,7 +10,9 @@ export const sections: Section[] = [
   { name: 'home', path: '/', hint: 'start here' },
   { name: 'about', path: '/about', hint: 'who' },
   { name: 'exp', path: '/experience', hint: 'work' },
-  { name: 'sound', path: '/music', hint: 'music' },
+  // Hidden for now: music lives in the orb. To bring it back, uncomment this
+  // line and the /music route in App.tsx.
+  // { name: 'sound', path: '/music', hint: 'music' },
   { name: 'verses', path: '/verses', hint: 'poems' },
   { name: 'blog', path: '/blog', hint: 'writing' },
 ]
@@ -28,7 +32,7 @@ export type Line = Segment[]
 export type Action =
   | { type: 'navigate'; path: string }
   | { type: 'theme' }
-  | { type: 'play' }
+  | { type: 'play'; song?: number }
   | { type: 'clear' }
 
 export interface Result {
@@ -62,9 +66,11 @@ export function run(input: string, cwd: Section): Result {
           ['cd <dir>', 'go to a section'],
           ['whoami', 'about me'],
           ['theme', 'toggle light/dark'],
-          ['play', 'play a tune'],
+          ['play [song]', 'play / pause, or pick a song'],
           ['clear', 'clear the screen'],
-        ].map(([c, d]) => [{ text: c.padEnd(10), tone: 'purple' }, { text: d, tone: 'dim' }]),
+        ]
+          .map(([c, d]): Line => [{ text: c.padEnd(13), tone: 'purple' }, { text: d, tone: 'dim' }])
+          .concat([[{ text: 'songs        ', tone: 'dim' }, { text: songs.map((s) => s.id).join('  '), tone: 'accent' }]]),
       }
     case 'ls':
       return { lines: [lsLine(cwd)] }
@@ -82,8 +88,24 @@ export function run(input: string, cwd: Section): Result {
       }
     case 'theme':
       return { lines: [[{ text: 'theme toggled', tone: 'dim' }]], action: { type: 'theme' } }
-    case 'play':
-      return { lines: [[{ text: '♪ ', tone: 'accent' }, { text: 'toggling the tune', tone: 'dim' }]], action: { type: 'play' } }
+    case 'play': {
+      if (!arg) {
+        return { lines: [[{ text: '♪ ', tone: 'accent' }, { text: 'play / pause', tone: 'dim' }]], action: { type: 'play' } }
+      }
+      const index = findSong(arg)
+      if (index < 0) {
+        return {
+          lines: [
+            [{ text: `play: no such song: ${arg}` }],
+            [{ text: 'songs: ', tone: 'dim' }, { text: songs.map((s) => s.id).join('  '), tone: 'purple' }],
+          ],
+        }
+      }
+      return {
+        lines: [[{ text: '♪ ', tone: 'accent' }, { text: songs[index].title, tone: 'accent' }]],
+        action: { type: 'play', song: index },
+      }
+    }
     case 'clear':
       return { lines: [], action: { type: 'clear' } }
     default:
@@ -99,6 +121,11 @@ export function complete(input: string): string {
   if (cd) {
     const hit = cd[2] && sections.find((s) => s.name.startsWith(cd[2]) && s.name !== cd[2])
     return hit ? input + hit.name.slice(cd[2].length) : ''
+  }
+  const play = input.match(/^play\s+(\S*)$/)
+  if (play) {
+    const hit = play[1] && songs.find((s) => s.id.startsWith(play[1].toLowerCase()) && s.id !== play[1])
+    return hit ? input + hit.id.slice(play[1].length) : ''
   }
   if (/^\S+$/.test(input)) {
     const hit = COMMANDS.find((c) => c.startsWith(input) && c !== input)

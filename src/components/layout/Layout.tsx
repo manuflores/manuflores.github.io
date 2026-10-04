@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from '@/components/features/Header'
 import GenerativeBackground from '@/components/ui/GenerativeBackground'
-import LoopOrb from '@/components/ui/LoopOrb'
+import OrbPlayer from '@/components/ui/OrbPlayer'
 
 const BACKGROUND_ROUTES = ['/', '/verses'] as const
 
@@ -19,7 +19,7 @@ export default function Layout() {
       <main key={location.pathname} className="relative max-w-3xl mx-auto px-6 pb-20 page-enter">
         <Outlet />
       </main>
-      <LoopOrb />
+      <OrbPlayer />
     </div>
   )
 }

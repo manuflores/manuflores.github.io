@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useLoopPlayer } from '@/hooks/useLoopPlayer'
+import { select, toggle as togglePlay } from '@/hooks/usePlayer'
 import { complete, lsLine, run, type Line, type Section, type Segment } from '@/lib/shell'
 
 interface Entry {
@@ -29,7 +29,6 @@ let nextId = 0
 
 export default function Shell({ open, cwd, onClose, onToggleTheme }: Props) {
   const navigate = useNavigate()
-  const { toggle: togglePlay } = useLoopPlayer()
   const [entries, setEntries] = useState<Entry[]>([])
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<string[]>([])
@@ -76,7 +75,8 @@ export default function Shell({ open, cwd, onClose, onToggleTheme }: Props) {
         onToggleTheme()
         break
       case 'play':
-        togglePlay()
+        if (result.action.song === undefined) togglePlay()
+        else select(result.action.song)
         break
       case 'navigate': {
         const { path } = result.action
