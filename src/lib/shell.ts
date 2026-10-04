@@ -84,7 +84,7 @@ export function run(input: string, cwd: Section): Result {
     }
     case 'whoami':
       return {
-        lines: [[{ text: 'manu — research scientist @ lumetec. caltech phd. sound, bikes, books.' }]],
+        lines: [[{ text: 'manu — research scientist @ lumetec. caltech phd. bikes, books, beats.' }]],
       }
     case 'theme':
       return { lines: [[{ text: 'theme toggled', tone: 'dim' }]], action: { type: 'theme' } }
