@@ -8,6 +8,7 @@ const links = [
   { to: '/experience', label: '~/exp' },
   { to: '/music', label: '~/sound' },
   { to: '/verses', label: '~/verses' },
+  { to: '/blog', label: '~/blog' },
 ]
 
 export default function Header() {

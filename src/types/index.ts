@@ -31,3 +31,11 @@ export interface Track {
   url: string
   title?: string
 }
+
+export interface Post {
+  slug: string
+  title: string
+  date: string
+  summary?: string
+  content: string
+}
