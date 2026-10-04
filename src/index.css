@@ -111,3 +111,13 @@ html.dark .hljs-comment, html.dark .hljs-quote { color: #857c6c; }
 .prose-custom .katex-display {
   @apply my-6 overflow-x-auto;
 }
+
+/* Loop orb: slow breathing while paused */
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.orb-idle { animation: orb-breathe 4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .orb-idle { animation: none; }
+}
