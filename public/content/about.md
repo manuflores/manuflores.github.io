@@ -1,7 +1,7 @@
 Qué onda ! Welcome to my website. 
 
 I'm currently working as a Research Scientist at Lumetec, 
-where I'm building scientific computing software and training neural networks Distributed Acoustic Sensing data -- turning kilometers of fiber optic cables accross the ocean into microphone arrays -- and using those signals to tell what's happening in the surface. 
+where I'm building scientific computing software and training neural networks using Distributed Acoustic Sensing data--which turns kilometers of fiber optic cables accross the ocean into microphone arrays-- to tell what's happening in the surface. 
 
 Previously I had fun building with agents for healthcare at Cainex.
 
