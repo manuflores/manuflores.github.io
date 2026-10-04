@@ -1,42 +1,44 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useTheme } from '@/hooks/useTheme'
-
-const links = [
-  { to: '/', label: '~/home' },
-  { to: '/about', label: '~/about' },
-  { to: '/experience', label: '~/exp' },
-  { to: '/music', label: '~/sound' },
-  { to: '/verses', label: '~/verses' },
-  { to: '/blog', label: '~/blog' },
-]
+import Shell from '@/components/features/Shell'
+import { sectionForPath } from '@/lib/shell'
 
 export default function Header() {
   const { isDark, toggle } = useTheme()
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [shellOpen, setShellOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const location = useLocation()
+  const cwd = sectionForPath(location.pathname)
 
   useEffect(() => {
-    setMenuOpen(false)
+    setShellOpen(false)
   }, [location.pathname])
 
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
-
+  // Backtick toggles the shell (unless typing elsewhere); Escape closes it.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape' && menuOpen) setMenuOpen(false)
+      if (e.key === 'Escape') setShellOpen(false)
+      const target = e.target as HTMLElement
+      const typing = target.closest('input, textarea, [contenteditable="true"]')
+      if (e.key === '`' && (!typing || target.getAttribute('aria-label') === 'Shell command')) {
+        e.preventDefault()
+        setShellOpen((o) => !o)
+      }
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [menuOpen])
+  }, [])
+
+  function closeShell() {
+    setShellOpen(false)
+    triggerRef.current?.focus()
+  }
 
   return (
     <>
-      <header className="py-6 relative z-40">
-        <div className="max-w-3xl mx-auto px-6 flex items-center justify-between">
+      <header className="py-6 relative z-30">
+        <div className="max-w-3xl mx-auto px-6 flex items-center justify-between gap-4">
           <NavLink
             to="/"
             className="text-xl font-bold text-accent-light dark:text-accent-dark active:text-secondary-light dark:active:text-secondary-dark transition-colors"
@@ -44,98 +46,27 @@ export default function Header() {
             manu flores
           </NavLink>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            {links.map(({ to, label }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={to === '/'}
-                className={({ isActive }) =>
-                  `text-base transition-colors ${
-                    isActive
-                      ? 'text-accent-light dark:text-accent-dark font-semibold'
-                      : 'text-secondary-light dark:text-secondary-dark hover:text-primary-light dark:hover:text-primary-dark'
-                  }`
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
-            <ThemeButton isDark={isDark} onClick={toggle} />
-          </nav>
-
-          {/* Mobile hamburger */}
-          <div className="flex items-center gap-3 md:hidden">
-            <ThemeButton isDark={isDark} onClick={toggle} />
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => setMenuOpen((o) => !o)}
-              className="text-secondary-light dark:text-secondary-dark hover:text-primary-light dark:hover:text-primary-dark"
-              aria-label="Toggle menu"
+              ref={triggerRef}
+              onClick={() => setShellOpen((o) => !o)}
+              className="group flex items-center gap-1.5 font-mono text-sm text-secondary-light dark:text-secondary-dark hover:text-primary-light dark:hover:text-primary-dark transition-colors"
+              aria-label={`Open site shell (current section: ${cwd.name}). Shortcut: backtick`}
+              aria-expanded={shellOpen}
+              aria-haspopup="dialog"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {menuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              <span className="text-accent-light dark:text-accent-dark font-semibold">
+                ~/{cwd.name === 'home' ? '' : cwd.name}
+              </span>
+              <span>$</span>
+              <span className="shell-caret" aria-hidden />
             </button>
+            <ThemeButton isDark={isDark} onClick={toggle} />
           </div>
         </div>
       </header>
 
-      {/* Mobile full-screen overlay */}
-      <div
-        className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
-          menuOpen
-            ? 'opacity-100 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <div
-          className="absolute inset-0 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-xl"
-          onClick={() => setMenuOpen(false)}
-        />
-        <div className="relative flex flex-col h-full">
-          {/* Overlay header */}
-          <div className="flex items-center justify-between px-6 py-6">
-            <span className="text-xl font-bold text-primary-light dark:text-primary-dark">
-              Menu
-            </span>
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="text-secondary-light dark:text-secondary-dark hover:text-primary-light dark:hover:text-primary-dark"
-              aria-label="Close menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Nav links */}
-          <nav className="flex flex-col px-6 gap-6 mt-8">
-            {links.map(({ to, label }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={to === '/'}
-                onClick={() => setMenuOpen(false)}
-                className={({ isActive }) =>
-                  `text-2xl transition-colors ${
-                    isActive
-                      ? 'text-accent-light dark:text-accent-dark font-semibold'
-                      : 'text-secondary-light dark:text-secondary-dark hover:text-primary-light dark:hover:text-primary-dark'
-                  }`
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
-      </div>
+      <Shell open={shellOpen} cwd={cwd} onClose={closeShell} onToggleTheme={toggle} />
     </>
   )
 }
