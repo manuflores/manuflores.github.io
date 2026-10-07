@@ -49,10 +49,22 @@ export function lsLine(current: Section): Line {
   ])
 }
 
+// Bare names always resolve to a section, wherever you are. Paths like
+// ../about or ~/./blog are walked for terminal users; nothing lives below a section.
 function findSection(arg: string): Section | undefined {
-  const name = arg.replace(/^~\/?/, '').replace(/\/$/, '')
-  if (name === '' || name === '..') return sections[0]
-  return sections.find((s) => s.name === name)
+  let at = sections[0]
+  for (const part of arg.replace(/^~/, '').split('/')) {
+    if (part === '' || part === '.') continue
+    if (part === '..') {
+      at = sections[0]
+      continue
+    }
+    if (at !== sections[0]) return undefined
+    const hit = sections.find((s) => s.name === part)
+    if (!hit) return undefined
+    at = hit
+  }
+  return at
 }
 
 export function run(input: string, cwd: Section): Result {
@@ -117,7 +129,7 @@ export function run(input: string, cwd: Section): Result {
 
 // Fish-style completion: returns the full suggested input, or '' if none.
 export function complete(input: string): string {
-  const cd = input.match(/^cd\s+(~\/)?(\S*)$/)
+  const cd = input.match(/^cd\s+([~./]*)(\S*)$/)
   if (cd) {
     const hit = cd[2] && sections.find((s) => s.name.startsWith(cd[2]) && s.name !== cd[2])
     return hit ? input + hit.name.slice(cd[2].length) : ''
