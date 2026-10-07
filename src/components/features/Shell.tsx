@@ -109,6 +109,10 @@ export default function Shell({ open, cwd, onClose, onToggleTheme }: Props) {
       const i = Math.min(history.length, historyIndex + 1)
       setHistoryIndex(i)
       setInput(history[i] ?? '')
+    } else if (e.key === 'l' && e.ctrlKey) {
+      // Like a real terminal: clear the screen but keep what's typed.
+      e.preventDefault()
+      setEntries([])
     } else if (e.key === 'Escape') {
       onClose()
     }
